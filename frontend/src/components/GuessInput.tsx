@@ -58,7 +58,7 @@ export function GuessInput() {
             <>
               <h3 className="text-2xl font-bold text-game-success">Game Complete!</h3>
               <p className="text-lg">Final Score: <span className="font-bold text-primary">{state.score}</span></p>
-              <p className="text-muted-foreground">Time: {state.timeElapsed}s | Hints: {hintsUsed}</p>
+              <p className="text-muted-foreground">Time: {Math.floor(state.timeElapsed / 1000)}s | Hints: {hintsUsed}</p>
             </>
           )}
           

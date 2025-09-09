@@ -14,6 +14,7 @@ export interface GameState {
   revealedPixels: boolean[][];
   gameStatus: 'menu' | 'playing' | 'paused' | 'completed' | 'failed';
   score: number;
+  bestScore: number;
   hintsUsed: number;
   timeElapsed: number;
   guesses: string[];
@@ -38,6 +39,7 @@ const initialState: GameState = {
   revealedPixels: [],
   gameStatus: 'menu',
   score: 0,
+  bestScore: 0,
   hintsUsed: 0,
   timeElapsed: 0,
   guesses: [],
@@ -102,18 +104,23 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'COMPLETE_GAME':
       const baseScore = state.currentImage?.difficulty === 'hard' ? 100 : 
                        state.currentImage?.difficulty === 'medium' ? 75 : 50;
-      const timeBonus = Math.max(0, 60 - state.timeElapsed);
+      const timeBonus = Math.max(0, Math.floor((60000 - state.timeElapsed) / 1000)); // Convert ms to seconds for bonus
       const hintPenalty = state.hintsUsed * 10;
-      const finalScore = Math.max(0, baseScore + timeBonus - hintPenalty);
+      const finalScore = action.payload.success ? Math.max(10, baseScore + timeBonus - hintPenalty) : 0;
+      const newBestScore = Math.max(state.bestScore, finalScore);
 
       return {
         ...state,
         gameStatus: action.payload.success ? 'completed' : 'failed',
-        score: action.payload.success ? finalScore : 0,
+        score: finalScore,
+        bestScore: newBestScore,
       };
 
     case 'RESET_GAME':
-      return initialState;
+      return {
+        ...initialState,
+        bestScore: state.bestScore, // Preserve best score
+      };
 
     case 'SET_CATEGORY':
       return {

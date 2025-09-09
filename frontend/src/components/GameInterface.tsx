@@ -15,15 +15,15 @@ export function GameInterface() {
     if (gameStatus !== 'playing') return;
 
     const timer = setInterval(() => {
-      dispatch({ type: 'UPDATE_TIME', payload: timeElapsed + 1 });
-    }, 1000);
+      dispatch({ type: 'UPDATE_TIME', payload: timeElapsed + 10 });
+    }, 10);
 
     return () => clearInterval(timer);
   }, [gameStatus, timeElapsed, dispatch]);
 
   // Game timeout
   useEffect(() => {
-    if (timeElapsed >= 120 && gameStatus === 'playing') { // 2 minutes timeout
+    if (timeElapsed >= 120000 && gameStatus === 'playing') { // 2 minutes timeout (120000ms)
       dispatch({ type: 'COMPLETE_GAME', payload: { success: false } });
     }
   }, [timeElapsed, gameStatus, dispatch]);
@@ -32,10 +32,12 @@ export function GameInterface() {
     dispatch({ type: 'RESET_GAME' });
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const formatTime = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const ms = Math.floor((milliseconds % 1000) / 10);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
   };
 
   if (!currentImage) {

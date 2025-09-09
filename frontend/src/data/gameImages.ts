@@ -8,7 +8,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'Cat',
       category: 'animals',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     },
     {
@@ -16,7 +16,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'Dog',
       category: 'animals',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     },
     {
@@ -34,7 +34,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'Car',
       category: 'objects',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     },
     {
@@ -42,7 +42,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'House',
       category: 'objects',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     }
   ],
@@ -52,7 +52,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'Pizza',
       category: 'food',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     },
     {
@@ -60,7 +60,7 @@ export const gameImages: Record<string, PixelImage[]> = {
       name: 'Apple',
       category: 'food',
       imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVQYV2NkYGBgYGJgYGBiYGBgZGBgYGRkYGBkZGBgZGRgYGBkYGBgZGBgYGRkYGBgZGRgYGBgYGBgYAAAHgAGAPr/OBEAAAAASUVORK5CYII=',
-      gridSize: 8,
+      gridSize: 16,
       difficulty: 'easy'
     }
   ]

@@ -1,21 +1,22 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useGame } from '@/contexts/GameContext';
-import { categories, gameImages } from '@/data/gameImages';
+import { gameImages } from '@/data/gameImages';
 import { Play, Trophy, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function GameMenu() {
   const { state, dispatch } = useGame();
-  const [selectedCategory, setSelectedCategory] = useState('animals');
+  const navigate = useNavigate();
 
   const handleStartGame = () => {
-    const categoryImages = gameImages[selectedCategory];
-    if (categoryImages && categoryImages.length > 0) {
-      const randomImage = categoryImages[Math.floor(Math.random() * categoryImages.length)];
+    // Get all images from all categories
+    const allImages = Object.values(gameImages).flat();
+    if (allImages.length > 0) {
+      const randomImage = allImages[Math.floor(Math.random() * allImages.length)];
       dispatch({ 
         type: 'START_GAME', 
-        payload: { image: randomImage, category: selectedCategory } 
+        payload: { image: randomImage, category: randomImage.category } 
       });
     }
   };
@@ -33,27 +34,8 @@ export function GameMenu() {
           </p>
         </div>
 
-        {/* Category Selection */}
-        <Card className="game-card p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-6 text-center">Choose a Category</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "game" : "outline"}
-                size="lg"
-                onClick={() => setSelectedCategory(category.id)}
-                className="h-20 flex-col gap-2"
-              >
-                <span className="text-3xl">{category.icon}</span>
-                <span>{category.name}</span>
-              </Button>
-            ))}
-          </div>
-        </Card>
-
         {/* Game Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Button
             variant="game"
             size="lg"
@@ -68,9 +50,10 @@ export function GameMenu() {
             variant="outline"
             size="lg"
             className="h-16 text-lg"
+            onClick={() => navigate('/leaderboard')}
           >
             <Trophy className="w-6 h-6" />
-            Leaderboard
+            Leaderboard today
           </Button>
           
           <Button
@@ -84,10 +67,10 @@ export function GameMenu() {
         </div>
 
         {/* Game Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-3 gap-4">
           <Card className="game-card p-4 text-center">
             <h3 className="text-sm text-muted-foreground mb-2">Best Score</h3>
-            <p className="text-2xl font-bold text-primary">847</p>
+            <p className="text-2xl font-bold text-primary">{state.bestScore}</p>
           </Card>
           <Card className="game-card p-4 text-center">
             <h3 className="text-sm text-muted-foreground mb-2">Games Played</h3>
