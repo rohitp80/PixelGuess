@@ -1,9 +1,7 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import Player from './models/Player.js';
-import GameSession from './models/GameSession.js';
+import { supabase } from './config/database.js';
 
 dotenv.config();
 
@@ -13,23 +11,31 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
 // Get or create player
 app.post('/api/players', async (req, res) => {
   try {
     const { name } = req.body;
-    let player = await Player.findOne({ name });
     
-    if (!player) {
-      player = new Player({ name });
-      await player.save();
+    // Check if player exists
+    const { data: existingPlayer } = await supabase
+      .from('players')
+      .select('*')
+      .eq('name', name)
+      .single();
+    
+    if (existingPlayer) {
+      return res.json(existingPlayer);
     }
     
-    res.json(player);
+    // Create new player
+    const { data: newPlayer, error } = await supabase
+      .from('players')
+      .insert([{ name }])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    res.json(newPlayer);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -38,20 +44,35 @@ app.post('/api/players', async (req, res) => {
 // Save game session
 app.post('/api/game-sessions', async (req, res) => {
   try {
-    const session = new GameSession(req.body);
-    await session.save();
+    // Insert game session
+    const { data: session, error: sessionError } = await supabase
+      .from('game_sessions')
+      .insert([req.body])
+      .select()
+      .single();
+    
+    if (sessionError) throw sessionError;
     
     // Update player stats
-    const player = await Player.findOne({ name: req.body.playerName });
+    const { playerName, completed, score } = req.body;
+    
+    const { data: player } = await supabase
+      .from('players')
+      .select('*')
+      .eq('name', playerName)
+      .single();
+    
     if (player) {
-      player.gamesPlayed += 1;
-      if (req.body.completed) {
-        player.gamesWon += 1;
-        if (req.body.score > player.bestScore) {
-          player.bestScore = req.body.score;
-        }
-      }
-      await player.save();
+      const updates = {
+        games_played: player.games_played + 1,
+        games_won: completed ? player.games_won + 1 : player.games_won,
+        best_score: completed && score > player.best_score ? score : player.best_score
+      };
+      
+      await supabase
+        .from('players')
+        .update(updates)
+        .eq('name', playerName);
     }
     
     res.json(session);
@@ -60,32 +81,19 @@ app.post('/api/game-sessions', async (req, res) => {
   }
 });
 
-// Get today's leaderboard
-app.get('/api/leaderboard/today', async (req, res) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const sessions = await GameSession.find({
-      completed: true,
-      createdAt: { $gte: today }
-    })
-    .sort({ score: -1 })
-    .limit(10);
-    
-    res.json(sessions);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get player stats
 app.get('/api/players/:name', async (req, res) => {
   try {
-    const player = await Player.findOne({ name: req.params.name });
-    if (!player) {
+    const { data: player, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('name', req.params.name)
+      .single();
+    
+    if (error) {
       return res.status(404).json({ error: 'Player not found' });
     }
+    
     res.json(player);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button';
 import { useGame } from '@/contexts/GameContext';
 import { PixelCanvas } from './PixelCanvas';
 import { GuessInput } from './GuessInput';
-import { ArrowLeft, Clock, Target, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Clock, Lightbulb } from 'lucide-react';
 
 export function GameInterface() {
   const { state, dispatch } = useGame();
-  const { currentImage, gameStatus, score, hintsUsed, timeElapsed } = state;
+  const { currentImage, gameStatus, hintsUsed, timeElapsed } = state;
 
   // Timer effect
   useEffect(() => {
@@ -68,15 +68,7 @@ export function GameInterface() {
         </div>
 
         {/* Game Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="game-card p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Target className="w-4 h-4 text-primary" />
-              <span className="text-sm text-muted-foreground">Score</span>
-            </div>
-            <p className="text-2xl font-bold text-primary">{score}</p>
-          </Card>
-          
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card className="game-card p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="w-4 h-4 text-secondary" />

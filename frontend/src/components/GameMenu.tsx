@@ -1,13 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useGame } from '@/contexts/GameContext';
 import { gameImages } from '@/data/gameImages';
-import { Play, Trophy, Settings } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Play } from 'lucide-react';
 
 export function GameMenu() {
-  const { state, dispatch } = useGame();
-  const navigate = useNavigate();
+  const { dispatch } = useGame();
 
   const handleStartGame = () => {
     // Get all images from all categories
@@ -35,51 +32,16 @@ export function GameMenu() {
         </div>
 
         {/* Game Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="flex justify-center">
           <Button
             variant="game"
             size="lg"
             onClick={handleStartGame}
-            className="h-16 text-lg"
+            className="h-16 text-lg px-8"
           >
             <Play className="w-6 h-6" />
             Start Game
           </Button>
-          
-          <Button
-            variant="outline"
-            size="lg"
-            className="h-16 text-lg"
-            onClick={() => navigate('/leaderboard')}
-          >
-            <Trophy className="w-6 h-6" />
-            Leaderboard today
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="lg"
-            className="h-16 text-lg"
-          >
-            <Settings className="w-6 h-6" />
-            Settings
-          </Button>
-        </div>
-
-        {/* Game Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="game-card p-4 text-center">
-            <h3 className="text-sm text-muted-foreground mb-2">Best Score</h3>
-            <p className="text-2xl font-bold text-primary">{state.bestScore}</p>
-          </Card>
-          <Card className="game-card p-4 text-center">
-            <h3 className="text-sm text-muted-foreground mb-2">Games Played</h3>
-            <p className="text-2xl font-bold text-secondary">23</p>
-          </Card>
-          <Card className="game-card p-4 text-center">
-            <h3 className="text-sm text-muted-foreground mb-2">Win Rate</h3>
-            <p className="text-2xl font-bold text-accent">78%</p>
-          </Card>
         </div>
       </div>
     </div>
