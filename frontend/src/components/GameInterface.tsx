@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button';
 import { useGame } from '@/contexts/GameContext';
 import { PixelCanvas } from './PixelCanvas';
 import { GuessInput } from './GuessInput';
-import { ArrowLeft, Clock, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Clock } from 'lucide-react';
 
 export function GameInterface() {
   const { state, dispatch } = useGame();
-  const { currentImage, gameStatus, hintsUsed, timeElapsed } = state;
+  const { currentImage, gameStatus, timeElapsed } = state;
 
   // Timer effect
   useEffect(() => {
@@ -68,21 +68,13 @@ export function GameInterface() {
         </div>
 
         {/* Game Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="game-card p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="w-4 h-4 text-secondary" />
               <span className="text-sm text-muted-foreground">Time</span>
             </div>
             <p className="text-2xl font-bold text-secondary">{formatTime(timeElapsed)}</p>
-          </Card>
-          
-          <Card className="game-card p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Lightbulb className="w-4 h-4 text-accent" />
-              <span className="text-sm text-muted-foreground">Hints</span>
-            </div>
-            <p className="text-2xl font-bold text-accent">{hintsUsed}/3</p>
           </Card>
           
           <Card className="game-card p-4 text-center">
@@ -106,14 +98,13 @@ export function GameInterface() {
           <div className="space-y-4">
             <GuessInput />
             
-            {/* Game Tips */}
+            {/* Hints */}
             <Card className="game-card p-4">
-              <h4 className="font-medium mb-3">Game Tips</h4>
+              <h4 className="font-medium mb-3">Hints</h4>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• Watch the pixels reveal gradually</li>
-                <li>• Use hints wisely (they reduce your score)</li>
-                <li>• Faster guesses earn more points</li>
-                <li>• Pay attention to the category</li>
+                <li>• Category: {currentImage.category}</li>
+                <li>• First letter: {currentImage.name[0].toUpperCase()}</li>
+                <li>• Length: {currentImage.name.length} letters</li>
               </ul>
             </Card>
           </div>

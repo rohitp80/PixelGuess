@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useGame } from '@/contexts/GameContext';
-import { Send, Lightbulb, RotateCcw } from 'lucide-react';
+import { Send, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function GuessInput() {
   const { state, dispatch } = useGame();
   const [currentGuess, setCurrentGuess] = useState('');
   
-  const { currentImage, guesses, hintsUsed, gameStatus } = state;
+  const { currentImage, guesses, gameStatus } = state;
 
   const handleSubmitGuess = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,21 +31,6 @@ export function GuessInput() {
     setCurrentGuess('');
   };
 
-  const handleUseHint = () => {
-    if (!currentImage || hintsUsed >= 3) return;
-    
-    dispatch({ type: 'USE_HINT' });
-    
-    const hints = [
-      `Category: ${currentImage.category}`,
-      `First letter: ${currentImage.name[0].toUpperCase()}`,
-      `Length: ${currentImage.name.length} letters`
-    ];
-    
-    const hintIndex = Math.min(hintsUsed, hints.length - 1);
-    toast.info(hints[hintIndex]);
-  };
-
   const handleResetGame = () => {
     dispatch({ type: 'RESET_GAME' });
   };
@@ -58,7 +43,7 @@ export function GuessInput() {
             <>
               <h3 className="text-2xl font-bold text-game-success">Game Complete!</h3>
               <p className="text-lg">Final Score: <span className="font-bold text-primary">{state.score}</span></p>
-              <p className="text-muted-foreground">Time: {Math.floor(state.timeElapsed / 1000)}s | Hints: {hintsUsed}</p>
+              <p className="text-muted-foreground">Time: {Math.floor(state.timeElapsed / 1000)}s</p>
             </>
           )}
           
@@ -99,27 +84,6 @@ export function GuessInput() {
               disabled={!currentGuess.trim() || gameStatus !== 'playing'}
             >
               <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleUseHint}
-              disabled={hintsUsed >= 3}
-              className="flex-1"
-            >
-              <Lightbulb className="w-4 h-4" />
-              Hint ({hintsUsed}/3)
-            </Button>
-            
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleResetGame}
-            >
-              <RotateCcw className="w-4 h-4" />
             </Button>
           </div>
         </form>
