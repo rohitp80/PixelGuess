@@ -1,7 +1,10 @@
 {
   "images": [
-    "cat.jpg",
-    "dog.png",
-    "elephant.jpg"
+    {
+      "filename": "tanjiro.png",
+      "name": "tanjiro",
+      "category": "anime",
+      "difficulty": "medium"
+    }
   ]
 }

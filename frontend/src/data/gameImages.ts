@@ -5,13 +5,28 @@ export async function loadImagesFromFolder(): Promise<Record<string, PixelImage[
   const images: Record<string, PixelImage[]> = {
     animals: [],
     objects: [],
-    food: []
+    food: [],
+    anime: []
   };
 
   try {
-    // This will be populated when images are added to public/images folder
-    // Image filename (without extension) becomes the answer
-    // Example: "cat.jpg" -> answer is "cat"
+    const response = await fetch('/images/image-list.json');
+    const data = await response.json();
+    
+    data.images.forEach((imageInfo: any) => {
+      const pixelImage: PixelImage = {
+        id: `${imageInfo.name}-${Date.now()}`,
+        name: imageInfo.name,
+        category: imageInfo.category,
+        imageData: `/images/${imageInfo.filename}`,
+        gridSize: 16,
+        difficulty: imageInfo.difficulty || 'easy'
+      };
+      
+      if (images[imageInfo.category]) {
+        images[imageInfo.category].push(pixelImage);
+      }
+    });
     
     return images;
   } catch (error) {
@@ -43,5 +58,6 @@ export const gameImages: Record<string, PixelImage[]> = {};
 export const categories = [
   { id: 'animals', name: 'Animals', icon: '🐾' },
   { id: 'objects', name: 'Objects', icon: '🏠' },
-  { id: 'food', name: 'Food', icon: '🍕' }
+  { id: 'food', name: 'Food', icon: '🍕' },
+  { id: 'anime', name: 'Anime', icon: '⚡' }
 ];

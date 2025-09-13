@@ -1,20 +1,21 @@
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/contexts/GameContext';
-import { createPixelImageFromFile } from '@/data/gameImages';
+import { loadImagesFromFolder } from '@/data/gameImages';
+import { PixelImage } from '@/contexts/GameContext';
 import { Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function GameMenu() {
   const { dispatch } = useGame();
-  const [availableImages, setAvailableImages] = useState<string[]>([]);
+  const [availableImages, setAvailableImages] = useState<PixelImage[]>([]);
 
   useEffect(() => {
-    // Load available images from image-list.json
+    // Load available images from public/images folder
     const loadImages = async () => {
       try {
-        const response = await fetch('/images/image-list.json');
-        const data = await response.json();
-        setAvailableImages(data.images || []);
+        const imagesByCategory = await loadImagesFromFolder();
+        const allImages = Object.values(imagesByCategory).flat();
+        setAvailableImages(allImages);
       } catch (error) {
         console.error('Error loading images:', error);
         setAvailableImages([]);
@@ -26,8 +27,7 @@ export function GameMenu() {
 
   const handleStartGame = () => {
     if (availableImages.length > 0) {
-      const randomFilename = availableImages[Math.floor(Math.random() * availableImages.length)];
-      const randomImage = createPixelImageFromFile(randomFilename, 'animals', 'easy');
+      const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)];
       dispatch({ 
         type: 'START_GAME', 
         payload: { image: randomImage, category: randomImage.category } 
@@ -57,9 +57,10 @@ export function GameMenu() {
             size="lg"
             onClick={handleStartGame}
             className="h-16 text-lg px-8"
+            disabled={availableImages.length === 0}
           >
             <Play className="w-6 h-6" />
-            Start Game
+            {availableImages.length > 0 ? 'Start Game' : 'Loading Images...'}
           </Button>
         </div>
       </div>

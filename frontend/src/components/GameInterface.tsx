@@ -111,7 +111,6 @@ export function GameInterface() {
               <h4 className="font-medium mb-3">Hints</h4>
               <ul className="text-sm text-muted-foreground space-y-2">
                 <li>• Category: {currentImage.category}</li>
-                <li>• First letter: {currentImage.name[0].toUpperCase()}</li>
                 <li>• Length: {currentImage.name.length} letters</li>
               </ul>
             </Card>
