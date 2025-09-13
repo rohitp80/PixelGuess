@@ -1,20 +1,39 @@
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/contexts/GameContext';
-import { gameImages } from '@/data/gameImages';
+import { createPixelImageFromFile } from '@/data/gameImages';
 import { Play } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function GameMenu() {
   const { dispatch } = useGame();
+  const [availableImages, setAvailableImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Load available images from image-list.json
+    const loadImages = async () => {
+      try {
+        const response = await fetch('/images/image-list.json');
+        const data = await response.json();
+        setAvailableImages(data.images || []);
+      } catch (error) {
+        console.error('Error loading images:', error);
+        setAvailableImages([]);
+      }
+    };
+    
+    loadImages();
+  }, []);
 
   const handleStartGame = () => {
-    // Get all images from all categories
-    const allImages = Object.values(gameImages).flat();
-    if (allImages.length > 0) {
-      const randomImage = allImages[Math.floor(Math.random() * allImages.length)];
+    if (availableImages.length > 0) {
+      const randomFilename = availableImages[Math.floor(Math.random() * availableImages.length)];
+      const randomImage = createPixelImageFromFile(randomFilename, 'animals', 'easy');
       dispatch({ 
         type: 'START_GAME', 
         payload: { image: randomImage, category: randomImage.category } 
       });
+    } else {
+      alert('No images found! Please add images to the public/images folder.');
     }
   };
 

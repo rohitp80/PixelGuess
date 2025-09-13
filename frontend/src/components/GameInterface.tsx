@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/contexts/GameContext';
@@ -9,13 +9,21 @@ import { ArrowLeft, Clock } from 'lucide-react';
 export function GameInterface() {
   const { state, dispatch } = useGame();
   const { currentImage, gameStatus, timeElapsed } = state;
+  const lastAutoRevealTime = useRef(0);
 
-  // Timer effect
+  // Timer effect with synchronized auto-reveal
   useEffect(() => {
     if (gameStatus !== 'playing') return;
 
     const timer = setInterval(() => {
-      dispatch({ type: 'UPDATE_TIME', payload: timeElapsed + 10 });
+      const newTime = timeElapsed + 10;
+      dispatch({ type: 'UPDATE_TIME', payload: newTime });
+      
+      // Auto-reveal pixels every 1000ms (1 second)
+      if (Math.floor(newTime / 1000) > Math.floor(lastAutoRevealTime.current / 1000)) {
+        dispatch({ type: 'AUTO_REVEAL_PIXELS' });
+        lastAutoRevealTime.current = newTime;
+      }
     }, 10);
 
     return () => clearInterval(timer);

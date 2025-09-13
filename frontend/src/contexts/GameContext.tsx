@@ -21,6 +21,7 @@ export interface GameState {
   currentGuess: string;
   revealProgress: number;
   selectedCategory: string;
+  autoRevealCount: { threePixel: number; twoPixel: number };
 }
 
 type GameAction =
@@ -32,7 +33,8 @@ type GameAction =
   | { type: 'COMPLETE_GAME'; payload: { success: boolean } }
   | { type: 'RESET_GAME' }
   | { type: 'SET_CATEGORY'; payload: string }
-  | { type: 'UPDATE_REVEAL_PROGRESS'; payload: number };
+  | { type: 'UPDATE_REVEAL_PROGRESS'; payload: number }
+  | { type: 'AUTO_REVEAL_PIXELS' };
 
 const initialState: GameState = {
   currentImage: null,
@@ -46,11 +48,12 @@ const initialState: GameState = {
   currentGuess: '',
   revealProgress: 0,
   selectedCategory: 'animals',
+  autoRevealCount: { threePixel: 0, twoPixel: 0 },
 };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case 'START_GAME':
+    case 'START_GAME': {
       const { image, category } = action.payload;
       return {
         ...state,
@@ -64,9 +67,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         guesses: [],
         currentGuess: '',
         revealProgress: 0,
+        autoRevealCount: { threePixel: 0, twoPixel: 0 },
       };
+    }
 
-    case 'REVEAL_PIXEL':
+    case 'REVEAL_PIXEL': {
       const { row, col } = action.payload;
       const newRevealedPixels = [...state.revealedPixels];
       newRevealedPixels[row][col] = true;
@@ -80,6 +85,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         revealedPixels: newRevealedPixels,
         revealProgress: newProgress,
       };
+    }
 
     case 'SUBMIT_GUESS':
       return {
@@ -101,7 +107,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         timeElapsed: action.payload,
       };
 
-    case 'COMPLETE_GAME':
+    case 'COMPLETE_GAME': {
       const baseScore = state.currentImage?.difficulty === 'hard' ? 100 : 
                        state.currentImage?.difficulty === 'medium' ? 75 : 50;
       const timeBonus = Math.max(0, Math.floor((60000 - state.timeElapsed) / 1000)); // Convert ms to seconds for bonus
@@ -115,6 +121,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         score: finalScore,
         bestScore: newBestScore,
       };
+    }
 
     case 'RESET_GAME':
       return {
@@ -127,6 +134,46 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         selectedCategory: action.payload,
       };
+
+    case 'AUTO_REVEAL_PIXELS': {
+      if (!state.currentImage) return state;
+      
+      const { threePixel, twoPixel } = state.autoRevealCount;
+      const pixelsToReveal = threePixel < 16 ? 3 : 2;
+      const newAutoRevealCount = pixelsToReveal === 3 
+        ? { ...state.autoRevealCount, threePixel: threePixel + 1 }
+        : { ...state.autoRevealCount, twoPixel: twoPixel + 1 };
+      
+      const currentRevealedPixels = [...state.revealedPixels];
+      const gridSize = state.currentImage.gridSize;
+      const unrevealedPositions: { row: number; col: number }[] = [];
+      
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          if (!currentRevealedPixels[row][col]) {
+            unrevealedPositions.push({ row, col });
+          }
+        }
+      }
+      
+      const actualPixelsToReveal = Math.min(pixelsToReveal, unrevealedPositions.length);
+      for (let i = 0; i < actualPixelsToReveal; i++) {
+        const randomIndex = Math.floor(Math.random() * unrevealedPositions.length);
+        const { row, col } = unrevealedPositions.splice(randomIndex, 1)[0];
+        currentRevealedPixels[row][col] = true;
+      }
+      
+      const totalPixels = gridSize * gridSize;
+      const revealedCount = currentRevealedPixels.flat().filter(Boolean).length;
+      const newProgress = (revealedCount / totalPixels) * 100;
+      
+      return {
+        ...state,
+        revealedPixels: currentRevealedPixels,
+        revealProgress: newProgress,
+        autoRevealCount: newAutoRevealCount,
+      };
+    }
 
     case 'UPDATE_REVEAL_PROGRESS':
       return {
