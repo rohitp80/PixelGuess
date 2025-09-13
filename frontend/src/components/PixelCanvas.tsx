@@ -5,12 +5,31 @@ interface PixelCanvasProps {
   size?: number;
 }
 
-export function PixelCanvas({ size = 400 }: PixelCanvasProps) {
+export function PixelCanvas({ size }: PixelCanvasProps) {
   const { state } = useGame();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [imageData, setImageData] = useState<ImageData | null>(null);
+  const [canvasSize, setCanvasSize] = useState(300);
 
   const { currentImage, revealedPixels, gameStatus } = state;
+
+  // Calculate responsive canvas size
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const maxSize = Math.min(containerWidth - 32, 400); // 16px padding on each side
+        const minSize = 250;
+        const calculatedSize = Math.max(minSize, maxSize);
+        setCanvasSize(size || calculatedSize);
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, [size]);
 
   // Load and process the actual image
   useEffect(() => {
@@ -52,10 +71,10 @@ export function PixelCanvas({ size = 400 }: PixelCanvasProps) {
     if (!ctx) return;
 
     const gridSize = currentImage.gridSize;
-    const pixelSize = size / gridSize;
+    const pixelSize = canvasSize / gridSize;
     
     // Clear canvas
-    ctx.clearRect(0, 0, size, size);
+    ctx.clearRect(0, 0, canvasSize, canvasSize);
     
     // Draw grid and pixels
     for (let row = 0; row < gridSize; row++) {
@@ -85,7 +104,7 @@ export function PixelCanvas({ size = 400 }: PixelCanvasProps) {
         ctx.strokeRect(x, y, pixelSize, pixelSize);
       }
     }
-  }, [currentImage, revealedPixels, size, imageData]);
+  }, [currentImage, revealedPixels, canvasSize, imageData]);
 
   if (!currentImage) {
     return (
@@ -96,30 +115,30 @@ export function PixelCanvas({ size = 400 }: PixelCanvasProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div ref={containerRef} className="flex flex-col items-center gap-3 md:gap-4 w-full">
       <div className="relative">
         <canvas
           ref={canvasRef}
-          width={size}
-          height={size}
-          className="pixel-grid border-2 border-primary rounded-lg shadow-glow"
+          width={canvasSize}
+          height={canvasSize}
+          className="pixel-grid border-2 border-primary rounded-lg shadow-glow max-w-full"
           style={{ imageRendering: 'pixelated' }}
         />
         
         {/* Overlay for game status */}
         {gameStatus !== 'playing' && (
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
-            <div className="text-center">
+            <div className="text-center p-4">
               {gameStatus === 'completed' && (
                 <div className="text-game-success">
-                  <h3 className="text-2xl font-bold mb-2">Congratulations!</h3>
-                  <p>You guessed correctly!</p>
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">Congratulations!</h3>
+                  <p className="text-sm md:text-base">You guessed correctly!</p>
                 </div>
               )}
               {gameStatus === 'failed' && (
                 <div className="text-game-error">
-                  <h3 className="text-2xl font-bold mb-2">Game Over!</h3>
-                  <p>The image was: {currentImage.name}</p>
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">Game Over!</h3>
+                  <p className="text-sm md:text-base">The image was: {currentImage.name}</p>
                 </div>
               )}
             </div>
@@ -129,7 +148,7 @@ export function PixelCanvas({ size = 400 }: PixelCanvasProps) {
       
       {/* Progress bar */}
       <div className="w-full max-w-md">
-        <div className="flex justify-between text-sm text-muted-foreground mb-2">
+        <div className="flex justify-between text-xs md:text-sm text-muted-foreground mb-2">
           <span>Reveal Progress</span>
           <span>{Math.round(state.revealProgress)}%</span>
         </div>

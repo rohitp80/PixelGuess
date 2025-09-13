@@ -37,20 +37,20 @@ export function GuessInput() {
 
   if (gameStatus !== 'playing') {
     return (
-      <Card className="game-card p-6 text-center">
+      <Card className="game-card p-4 md:p-6 text-center">
         <div className="space-y-4">
           {gameStatus === 'completed' && (
             <>
-              <h3 className="text-2xl font-bold text-game-success">Game Complete!</h3>
-              <p className="text-lg">Final Score: <span className="font-bold text-primary">{state.score}</span></p>
-              <p className="text-muted-foreground">Time: {Math.floor(state.timeElapsed / 1000)}s</p>
+              <h3 className="text-xl md:text-2xl font-bold text-game-success">Game Complete!</h3>
+              <p className="text-base md:text-lg">Final Score: <span className="font-bold text-primary">{state.score}</span></p>
+              <p className="text-sm md:text-base text-muted-foreground">Time: {Math.floor(state.timeElapsed / 1000)}s</p>
             </>
           )}
           
           {gameStatus === 'failed' && (
             <>
-              <h3 className="text-2xl font-bold text-game-error">Time's Up!</h3>
-              <p className="text-lg">The answer was: <span className="font-bold text-primary">{currentImage?.name}</span></p>
+              <h3 className="text-xl md:text-2xl font-bold text-game-error">Time's Up!</h3>
+              <p className="text-base md:text-lg">The answer was: <span className="font-bold text-primary">{currentImage?.name}</span></p>
             </>
           )}
           
@@ -66,24 +66,26 @@ export function GuessInput() {
   return (
     <div className="space-y-4">
       {/* Guess Input */}
-      <Card className="game-card p-6">
-        <h3 className="text-lg font-semibold mb-4">What do you think it is?</h3>
+      <Card className="game-card p-4 md:p-6">
+        <h3 className="text-base md:text-lg font-semibold mb-4">What do you think it is?</h3>
         
         <form onSubmit={handleSubmitGuess} className="space-y-4">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Input
               value={currentGuess}
               onChange={(e) => setCurrentGuess(e.target.value)}
               placeholder="Enter your guess..."
-              className="flex-1"
+              className="flex-1 text-base"
               disabled={gameStatus !== 'playing'}
             />
             <Button 
               type="submit" 
               variant="game"
               disabled={!currentGuess.trim() || gameStatus !== 'playing'}
+              className="w-full sm:w-auto"
             >
               <Send className="w-4 h-4" />
+              <span className="sm:hidden ml-2">Submit</span>
             </Button>
           </div>
         </form>
@@ -91,16 +93,16 @@ export function GuessInput() {
 
       {/* Previous Guesses */}
       {guesses.length > 0 && (
-        <Card className="game-card p-4">
-          <h4 className="text-sm font-medium text-muted-foreground mb-3">Previous Guesses</h4>
+        <Card className="game-card p-3 md:p-4">
+          <h4 className="text-xs md:text-sm font-medium text-muted-foreground mb-3">Previous Guesses</h4>
           <div className="space-y-2">
             {guesses.slice(-5).map((guess, index) => (
               <div 
                 key={index}
-                className="flex items-center gap-2 text-sm p-2 bg-muted rounded"
+                className="flex items-center gap-2 text-xs md:text-sm p-2 bg-muted rounded"
               >
                 <span className="text-game-error">✗</span>
-                <span>{guess}</span>
+                <span className="truncate">{guess}</span>
               </div>
             ))}
           </div>

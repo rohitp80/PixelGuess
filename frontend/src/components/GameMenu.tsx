@@ -41,11 +41,11 @@ export function GameMenu() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         {/* Title */}
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold glow-text mb-4 bg-gradient-primary bg-clip-text text-transparent">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold glow-text mb-4 bg-gradient-primary bg-clip-text text-transparent">
             PixelGuess
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg md:text-xl text-muted-foreground px-4">
             Guess the image as it reveals pixel by pixel!
           </p>
         </div>
@@ -56,10 +56,10 @@ export function GameMenu() {
             variant="game"
             size="lg"
             onClick={handleStartGame}
-            className="h-16 text-lg px-8"
+            className="h-12 md:h-16 text-base md:text-lg px-6 md:px-8"
             disabled={availableImages.length === 0}
           >
-            <Play className="w-6 h-6" />
+            <Play className="w-5 h-5 md:w-6 md:h-6" />
             {availableImages.length > 0 ? 'Start Game' : 'Loading Images...'}
           </Button>
         </div>
