@@ -15,6 +15,7 @@ export function GameMenu() {
       try {
         const imagesByCategory = await loadImagesFromFolder();
         const allImages = Object.values(imagesByCategory).flat();
+        console.log('Loaded images:', allImages); // Debug log
         setAvailableImages(allImages);
       } catch (error) {
         console.error('Error loading images:', error);

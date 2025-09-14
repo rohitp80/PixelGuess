@@ -1,10 +1,22 @@
 {
   "images": [
     {
-      "filename": "tanjiro.png",
+      "filename": "frog_animal_4.png",
+      "name": "frog",
+      "category": "animal",
+      "difficulty": "4"
+    },
+    {
+      "filename": "love_feeling_4.png",
+      "name": "love",
+      "category": "feeling",
+      "difficulty": "4"
+    },
+    {
+      "filename": "tanjiro_anime_7.png",
       "name": "tanjiro",
       "category": "anime",
-      "difficulty": "medium"
+      "difficulty": "7"
     }
   ]
 }

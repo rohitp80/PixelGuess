@@ -19,12 +19,15 @@ export async function loadImagesFromFolder(): Promise<Record<string, PixelImage[
         name: imageInfo.name,
         category: imageInfo.category,
         imageData: `/images/${imageInfo.filename}`,
-        gridSize: 16,
+        gridSize: 32,
         difficulty: imageInfo.difficulty || 'easy'
       };
       
       if (images[imageInfo.category]) {
         images[imageInfo.category].push(pixelImage);
+      } else {
+        // Add to animals as default if category doesn't exist
+        images.animals.push(pixelImage);
       }
     });
     
@@ -48,7 +51,7 @@ export function createPixelImageFromFile(
     name: nameWithoutExt,
     category,
     imageData: `/images/${filename}`,
-    gridSize: 16,
+    gridSize: 32,
     difficulty
   };
 }

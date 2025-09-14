@@ -139,8 +139,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       if (!state.currentImage) return state;
       
       const { threePixel, twoPixel } = state.autoRevealCount;
-      const pixelsToReveal = threePixel < 16 ? 3 : 2;
-      const newAutoRevealCount = pixelsToReveal === 3 
+      const pixelsToReveal = threePixel < 16 ? 12 : 8;
+      const newAutoRevealCount = pixelsToReveal === 12 
         ? { ...state.autoRevealCount, threePixel: threePixel + 1 }
         : { ...state.autoRevealCount, twoPixel: twoPixel + 1 };
       
